@@ -52,6 +52,8 @@
     <ul>
       <li onclick="downloadFile()">1.pdf 下载</li>
       <li onclick="downloadFile('2.pdf')">1.pdf 下载名称改为2.pdf</li>
+      <li onclick="downloadFileByOpen('1.pdf')">1.pdf 下载走window.open</li>
+      <li onclick="downloadFileByOpen('1.exe')">1.exe 下载走window.open</li>
     </ul>
 
     实验三：非同源文件下载
@@ -113,6 +115,9 @@
         document.body.appendChild(aTag);
         aTag.click();
         aTag.remove();
+      }
+      function downloadFileByOpen(file) {
+        window.open('http://127.0.0.1:5500/front/' + file)
       }
     </script>
   </body>
