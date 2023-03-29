@@ -26,12 +26,8 @@
     </style>
   </head>
   <body>
-    html a标签实现下载：
+    实验一：html a标签实现下载
     <ul>
-      <!-- download指明是下载操作；
-        若未指明download, 若文件类型是浏览器可解析文件，比如pdf、png、txt等，则浏览器会采取预览模式，打开文件；
-        若文件类型无法解析，如exe,则走下载; -->
-      <!-- rel: noopener 保证安全打开新链接, 相关资料 https://mathiasbynens.github.io/rel-noopener/ -->
       <li>
         未指明download, pdf文件类型可解析，走预览模式:
         <a href="/1.pdf" rel="noopener">1.pdf 预览</a>
@@ -52,31 +48,28 @@
       </li>
     </ul>
 
-    js 创建a标签实现下载： 常见使用场景:
-    使用组件库封装组件,但需要在某组件click时触发下载操作;
-    由于组件被封装,不能通过添加html标签形式实现下载.
+    实验二：js 创建a标签实现下载  
     <ul>
       <li onclick="downloadFile()">1.pdf 下载</li>
       <li onclick="downloadFile('2.pdf')">1.pdf 下载名称改为2.pdf</li>
     </ul>
 
-    非同源文件下载：
-    下载非同源文件时，download属性失效。download失效后，行为表现：浏览器不能解析的文件走下载，能解析的文件走解析;
-    <!-- 详见：https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/a -->
-    尽管HTTP URL需要同源，但可以使用blob:URL，和data：URL生存缓存url进行统一下载
-    <!-- blob相关资料：https://juejin.cn/post/7213642622073552953 -->
+    实验三：非同源文件下载
     <ul>
       <li>
-        <a href="http://127.0.0.1:5501/1.exe" download rel="noopener"
-          >1.exe 下载非同源文件 不能解析走下载</a
+        <a href="http://localhost:8000/getExe1" download rel="noopener"
+          >1.exe 不能解析走下载</a
         >
       </li>
       <li>
-        <a href="http://127.0.0.1:5501/1.pdf" download rel="noopener"
-          >1.pdf 下载非同源文件 能解析走预览</a
+        <a href="http://localhost:8000/getPdf1" download rel="noopener"
+          >1.pdf 能解析走预览</a
         >
       </li>
-      <li onclick="downloadAsyncFile()">1.pdf 下载非同源文件</li>
+      <li onclick="downloadAsyncFileByBlob()">1.pdf blob形式可修改名称</li>
+      <li onclick="downloadAsyncFileByResponse()">
+        1.pdf 配置response conten-type形式，统一走下载
+      </li>
     </ul>
     <script>
       function downloadFile(rename) {
@@ -93,25 +86,33 @@
         aTag.click();
         aTag.remove();
       }
-      function downloadAsyncFile() {
+      function downloadAsyncFileByBlob() {
         const xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
-          // readyState: 0-请求未初始化, 1-服务器连接已建立, 2-请求已接收, 3-请求处理中, 4-请求已完成,且响应已就绪
-          // 详见：https://www.runoob.com/ajax/ajax-xmlhttprequest-onreadystatechange.html
           if (xhr.readyState === 4 && xhr.status === 200) {
             const blob = new Blob([xhr.responseText]);
             const aTag = document.createElement("a");
-            // 记得在不需要这个url时，主动销毁url: revokeObjectURL()
             aTag.href = URL.createObjectURL(blob);
             aTag.rel = "noopener";
-            aTag.download='新名字.pdf'
+            // 修改下载名称：
+            aTag.download = "新名字.pdf";
             document.body.appendChild(aTag);
             aTag.click();
             aTag.remove();
           }
         };
-        xhr.open("GET", "http://127.0.0.1:5501/1.pdf", true);
+        xhr.open("GET", "http://localhost:8000/getPdf1", true);
         xhr.send();
+      }
+      function downloadAsyncFileByResponse() {
+        const aTag = document.createElement('a');
+        aTag.href="http://localhost:8000/getPdf1ByOctet";
+        aTag.rel="noopener";
+        // download不生效，原因：非同源
+        // aTag.download="新名字2.pdf";
+        document.body.appendChild(aTag);
+        aTag.click();
+        aTag.remove();
       }
     </script>
   </body>

@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "服务提供pdf、exe文件资源",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zhangluyue",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
